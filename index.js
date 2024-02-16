@@ -17,7 +17,11 @@ BuildServer();
 // // client.connect();
 // // SQL-запит для створення таблиці
 // const createTableQuery = `
-// INSERT INTO users (id, username, email) VALUES (1, 'pig', 'pig@gmail.com');
+// CREATE TABLE IF NOT EXISTS users (
+//     id SERIAL PRIMARY KEY,
+//     username VARCHAR(20) NOT NULL,
+//     password VARCHAR(20) NOT NULL
+// )
 // `;
 // client
 //   .connect()

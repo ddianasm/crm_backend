@@ -8,7 +8,7 @@ export const BuildServer = async () => {
 
   server.register(fastifyCors, {
     origin: "http://localhost:3002",
-    //   credentials: true,
+    credentials: true,
   });
   server.register(usersRoutes);
 
