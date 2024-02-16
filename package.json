@@ -3,10 +3,10 @@
   "name": "dropbox_backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon index.js",
+    "build:image": "docker build -t dropbox_backend:latest .",
+    "run:image": "docker run -p 3000:3000 --env-file .env -it dropbox_backend"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +14,8 @@
   "dependencies": {
     "@fastify/cors": "^9.0.1",
     "fastify": "^4.26.0",
-    "fastify-swagger": "^5.2.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.3"
+    "fastify-swagger": "^5.2.0",
+    "nodemon": "^3.0.3",
+    "pg": "^8.11.3"
   }
 }

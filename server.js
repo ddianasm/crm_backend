@@ -1,24 +1,21 @@
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import { usersRoutes } from "./routes/routes.js";
+import config from "./config.js";
 
-const PORT = 3500;
-const app = fastify({ logger: true });
+export const BuildServer = async () => {
+  const server = fastify({});
 
-app.register(fastifyCors, {
-  origin: "http://localhost:3002",
-  //   credentials: true,
-});
-app.register(usersRoutes);
+  server.register(fastifyCors, {
+    origin: "http://localhost:3002",
+    //   credentials: true,
+  });
+  server.register(usersRoutes);
 
-const start = async () => {
-  try {
-    await app.listen(PORT);
-    console.log(`Server is running on port ${PORT}`);
-  } catch (error) {
-    app.log.error(error);
-    process.exit(1);
-  }
+  await server.listen({
+    port: config.port,
+    host: "0.0.0.0",
+  });
+
+  console.log(`Server is running on port ${config.port}`);
 };
-
-start();
