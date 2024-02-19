@@ -1,21 +1,41 @@
 {
-  "type": "module",
   "name": "dropbox_backend",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon src/index.ts",
     "build:image": "docker build -t dropbox_backend:latest .",
     "run:image": "docker run -p 3000:3000 --env-file .env -it dropbox_backend"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ],
+    "execMap": {
+      "ts": "node --require ts-node/register -r tsconfig-paths/register"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^9.0.1",
+    "@prisma/client": "^5.9.1",
     "fastify": "^4.26.0",
     "fastify-swagger": "^5.2.0",
     "nodemon": "^3.0.3",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "prisma": "^5.9.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19"
   }
 }

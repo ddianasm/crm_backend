@@ -1,6 +1,31 @@
-//створення сервера
-import { BuildServer } from "./server.js";
+import { BuildServer } from "@/server";
 BuildServer();
+// import { UserController } from "@/user/user.controller";
+// import { PrismaClient } from "@prisma/client";
+
+// const prisma = new PrismaClient();
+
+// UserController.create({ username: "alina", password: "656565" })
+//   .catch(e => {
+//     console.error(e.message);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
+//   findUnique: async () => {
+//     const res = await prisma.user.findUnique({ where: { id: 1 } });
+//     return res;
+//   },
+// };
+
+// userController
+//   .findUnique()
+//   .then(result => {
+//     console.log(result); // Виводимо результат у консоль
+//   })
+//   .catch(error => {
+//     console.error("помилка prisma", error); // Виводимо помилку у консоль, якщо вона є
+//   });
 
 //запит до бази даних НЕ ВИДАЛЯТИ
 // import pkg from "pg";

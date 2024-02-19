@@ -1,7 +1,7 @@
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-import { usersRoutes } from "./routes/routes.js";
-import config from "./config.js";
+import { UserRoutes } from "@/user/user.routes";
+import config from "@/config";
 
 export const BuildServer = async () => {
   const server = fastify({});
@@ -10,7 +10,7 @@ export const BuildServer = async () => {
     origin: "http://localhost:3002",
     credentials: true,
   });
-  server.register(usersRoutes);
+  server.register(UserRoutes);
 
   await server.listen({
     port: config.port,
