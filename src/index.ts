@@ -1,5 +1,7 @@
 import { BuildServer } from "@/server";
+import pkg from "pg";
 BuildServer();
+
 // import { UserController } from "@/user/user.controller";
 // import { PrismaClient } from "@prisma/client";
 
@@ -27,8 +29,6 @@ BuildServer();
 //     console.error("помилка prisma", error); // Виводимо помилку у консоль, якщо вона є
 //   });
 
-//запит до бази даних НЕ ВИДАЛЯТИ
-// import pkg from "pg";
 // const { Client } = pkg;
 
 // const client = new Client({

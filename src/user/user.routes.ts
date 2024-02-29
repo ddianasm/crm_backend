@@ -4,21 +4,27 @@ import { userJsonSchema } from "@/user/user.zod.schema";
 
 export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
   server.route({
-    url: "/user/create",
+    url: "/sign_up",
     method: "POST",
     schema: {
       body: userJsonSchema.$ref,
     },
-    handler: UserController.create,
+    handler: UserController.signUp,
   });
 
   server.route({
-    url: "/user/find",
+    url: "/sign_in",
     method: "POST",
     schema: {
       body: userJsonSchema.$ref,
     },
-    handler: UserController.find,
+    handler: UserController.signIn,
+  });
+
+  server.route({
+    url: "/auth",
+    method: "GET",
+    handler: UserController.isAuth,
   });
 
   done();
