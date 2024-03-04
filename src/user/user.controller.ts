@@ -62,51 +62,23 @@ export const UserController = {
     request: FastifyRequest<{ Body: { productId: number } }>,
     reply: FastifyReply
   ) => {
-    const ourCookie = 'Діана'
-    // знайти user по ourCookie
-
-    // const user = await prisma.users.findUnique({
-    //   where: {
-    //     username: ourCookie
-    //   },
-    // })
-    // console.log(user);
-
-    // const product = await prisma.products.findUnique({
-    //   where: {
-    //     id: request.body.productId
-    //   }
-    // })
-    // console.log(product);
-
-
-
-
+    const username = request.cookies?.username;
 
     const user = await prisma.users.update({
-      where: { username: ourCookie },
+      where: { username },
       data: {
         products: {
           connect: { id: request.body.productId }
         }
       }
     })
+    if (user) {
+      console.log('Product added successfully');
+      reply.status(200).send();
+
+    } else {
+      console.log('Product not added');
+      reply.status(400).send();
+    }
   }
 }
-// export const UserController = {
-//   create: async ({
-//     username,
-//     password,
-//   }: {
-//     username: string;
-//     password: string;
-//   }) => {
-//     const createUserResult = await prisma.user.create({
-//       data: {
-//         username: username,
-//         password: password,
-//       },
-//     });
-//     console.log(createUserResult);
-//   },
-// };
