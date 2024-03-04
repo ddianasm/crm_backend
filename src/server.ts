@@ -4,6 +4,8 @@ import fastifyCors from "@fastify/cors";
 import { UserRoutes } from "@/user/user.routes";
 import config from "@/config";
 import { userJsonSchema } from "@/user/user.zod.schema";
+import { productJsonSchema } from "@/product/product.zod.schema";
+import { ProductRoutes } from "@/product/product.routes";
 
 export const BuildServer = async () => {
   const server = fastify({});
@@ -13,11 +15,13 @@ export const BuildServer = async () => {
   });
 
   server.addSchema(userJsonSchema.schema);
+  server.addSchema(productJsonSchema.schema);
   server.register(fastifyCors, {
     origin: "http://localhost:3005",
     credentials: true,
   });
   server.register(UserRoutes);
+  server.register(ProductRoutes)
 
   await server.listen({
     port: config.port,
