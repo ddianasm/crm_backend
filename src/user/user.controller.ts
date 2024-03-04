@@ -80,5 +80,25 @@ export const UserController = {
       console.log('Product not added');
       reply.status(400).send();
     }
+  },
+  getUserProducts: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    const username = request.cookies?.username;
+
+    const userWithProducts = await prisma.users.findUnique({
+      where: { username },
+      include: { products: true }
+    });
+
+    if (userWithProducts) {
+      const products = userWithProducts.products;
+      console.log(products);
+      reply.send(products);
+    } else {
+      console.log('Error when searching for products');
+      reply.status(400).send();
+    }
   }
 }

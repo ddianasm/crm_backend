@@ -33,5 +33,11 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
     handler: UserController.addProduct
   })
 
+  server.route({
+    url: "/get_user_products",
+    method: "GET",
+    handler: UserController.getUserProducts,
+  })
+
   done();
 };
