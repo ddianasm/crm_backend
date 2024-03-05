@@ -10,15 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id       Int       @id @default(autoincrement())
   username String    @unique
   password String
-  products Products[]
+  products Product[]
 }
 
-model Products {
+model Product {
   id     Int    @id @default(autoincrement())
   name   String @unique
-  users  Users[]
+  user  User @relation(fields: [userId], references: [id])
+  userId Int
 }

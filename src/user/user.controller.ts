@@ -9,7 +9,7 @@ export const UserController = {
     request: FastifyRequest<{ Body: userZodSchemaType }>,
     reply: FastifyReply
   ) => {
-    const createUserResult = await prisma.users.create({
+    const createUserResult = await prisma.user.create({
       data: {
         username: request.body.username,
         password: request.body.password,
@@ -28,7 +28,7 @@ export const UserController = {
     request: FastifyRequest<{ Body: userZodSchemaType }>,
     reply: FastifyReply
   ) => {
-    const user = await prisma.users.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         username: request.body.username,
         password: request.body.password,
@@ -58,47 +58,47 @@ export const UserController = {
       reply.status(401).send();
     }
   },
-  addProduct: async (
-    request: FastifyRequest<{ Body: { productId: number } }>,
-    reply: FastifyReply
-  ) => {
-    const username = request.cookies?.username;
+  // addProduct: async (
+  //   request: FastifyRequest<{ Body: { productId: number } }>,
+  //   reply: FastifyReply
+  // ) => {
+  //   const username = request.cookies?.username;
 
-    const user = await prisma.users.update({
-      where: { username },
-      data: {
-        products: {
-          connect: { id: request.body.productId }
-        }
-      }
-    })
-    if (user) {
-      console.log('Product added successfully');
-      reply.status(200).send();
+  //   const user = await prisma.user.update({
+  //     where: { username },
+  //     data: {
+  //       products: {
+  //         connect: { id: request.body.productId }
+  //       }
+  //     }
+  //   })
+  //   if (user) {
+  //     console.log('Product added successfully');
+  //     reply.status(200).send();
 
-    } else {
-      console.log('Product not added');
-      reply.status(400).send();
-    }
-  },
-  getUserProducts: async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) => {
-    const username = request.cookies?.username;
+  //   } else {
+  //     console.log('Product not added');
+  //     reply.status(400).send();
+  //   }
+  // },
+  // getUserProducts: async (
+  //   request: FastifyRequest,
+  //   reply: FastifyReply
+  // ) => {
+  //   const username = request.cookies?.username;
 
-    const userWithProducts = await prisma.users.findUnique({
-      where: { username },
-      include: { products: true }
-    });
+  //   const userWithProducts = await prisma.user.findUnique({
+  //     where: { username },
+  //     include: { products: true }
+  //   });
 
-    if (userWithProducts) {
-      const products = userWithProducts.products;
-      console.log(products);
-      reply.send(products);
-    } else {
-      console.log('Error when searching for products');
-      reply.status(400).send();
-    }
-  }
+  //   if (userWithProducts) {
+  //     const products = userWithProducts.products;
+  //     console.log(products);
+  //     reply.send(products);
+  //   } else {
+  //     console.log('Error when searching for products');
+  //     reply.status(400).send();
+  //   }
+  // }
 }

@@ -27,17 +27,17 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
     handler: UserController.isAuth,
   });
 
-  server.route({
-    url: "/add_product",
-    method: "POST",
-    handler: UserController.addProduct
-  })
+  // server.route({
+  //   url: "/add_product",
+  //   method: "POST",
+  //   handler: UserController.addProduct
+  // })
 
-  server.route({
-    url: "/get_user_products",
-    method: "GET",
-    handler: UserController.getUserProducts,
-  })
+  // server.route({
+  //   url: "/get_user_products",
+  //   method: "GET",
+  //   handler: UserController.getUserProducts,
+  // })
 
   done();
 };
