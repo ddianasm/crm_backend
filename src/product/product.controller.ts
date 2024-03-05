@@ -60,9 +60,12 @@ export const ProductController = {
     const products = await prisma.product.findMany({
       where: { userId: user?.id }
     })
+    const productNames = products.map(product => ({ name: product.name }));
     if (!products) {
       return reply.status(401).send('Products not found');
     }
-    return reply.status(200).send(products)
+    console.log(productNames);
+
+    return reply.status(200).send(productNames)
   }
 };
