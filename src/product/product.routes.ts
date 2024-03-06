@@ -18,13 +18,13 @@ export const ProductRoutes: FastifyPluginCallback = async (server, opts, done) =
         handler: ProductController.getProducts,
     })
 
-    server.route({
-        url: "/delete_product",
-        method: "POST",
-        schema: {
-            body: productJsonSchema.$ref,
-        },
-        handler: ProductController.delete,
-    })
+    // server.route({
+    //     url: "/delete_product",
+    //     method: "POST",
+    //     schema: {
+    //         body: productJsonSchema.$ref,
+    //     },
+    //     handler: ProductController.delete,
+    // })
     done();
 };
