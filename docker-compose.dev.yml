@@ -1,0 +1,31 @@
+version: "3"
+
+volumes:
+  db:
+
+services:
+  crm_backend:
+    container_name: crm_backend
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+    restart: no
+    working_dir: /app
+    ports:
+      - "${HOST_PORT}:${CONTAINER_PORT}"
+      - "5555:5555"
+    env_file: ".env"
+    volumes:
+      - ./:/app
+    depends_on:
+      - database_crm
+
+  database_crm:
+    container_name: database_crm
+    image: postgres:15.2-alpine
+    restart: no
+    env_file: ".env"
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5433:${DATABASE_PORT}"
