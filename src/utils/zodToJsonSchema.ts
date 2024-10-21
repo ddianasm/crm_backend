@@ -7,7 +7,6 @@ export const jsonSchemaFromZod = (zod: ZodType, id: string) => {
     $refStrategy: "none",
   }).definitions?.[id];
   return {
-    // simpleSchema,
     schema: {
       $id: id,
       ...simpleSchema,

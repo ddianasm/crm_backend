@@ -4,7 +4,7 @@ import { productJsonSchema } from "@/product/product.zod.schema";
 
 export const ProductRoutes: FastifyPluginCallback = async (server, opts, done) => {
     server.route({
-        url: "/add_product",
+        url: "/add-product",
         method: "POST",
         schema: {
             body: productJsonSchema.$ref,
@@ -13,7 +13,7 @@ export const ProductRoutes: FastifyPluginCallback = async (server, opts, done) =
     })
 
     server.route({
-        url: "/get_products",
+        url: "/products",
         method: "GET",
         handler: ProductController.getProducts,
     })
@@ -27,7 +27,18 @@ export const ProductRoutes: FastifyPluginCallback = async (server, opts, done) =
     //     handler: ProductController.delete,
     // })
     server.route({
-        url: "/product/columns",
+        url: "/delete-products",
+        method: "POST",
+        schema: {
+            body: {
+                type: 'array',
+                items: { type: 'number' }
+            }
+        },
+        handler: ProductController.delete
+    })
+    server.route({
+        url: "/columns",
         method: "GET",
         handler: ProductController.getColumns,
     })

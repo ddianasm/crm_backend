@@ -4,7 +4,7 @@ import { userJsonSchema } from "@/user/user.zod.schema";
 
 export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
   server.route({
-    url: "/sign_up",
+    url: "/sign-up",
     method: "POST",
     schema: {
       body: userJsonSchema.$ref,
@@ -13,7 +13,7 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
   });
 
   server.route({
-    url: "/sign_in",
+    url: "/sign-in",
     method: "POST",
     schema: {
       body: userJsonSchema.$ref,
@@ -27,17 +27,11 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
     handler: UserController.isAuth,
   });
 
-  // server.route({
-  //   url: "/add_product",
-  //   method: "POST",
-  //   handler: UserController.addProduct
-  // })
-
-  // server.route({
-  //   url: "/get_user_products",
-  //   method: "GET",
-  //   handler: UserController.getUserProducts,
-  // })
+  server.route({
+    url: "/logout",
+    method: "GET",
+    handler: UserController.logout,
+  });
 
   done();
 };

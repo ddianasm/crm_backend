@@ -9,97 +9,78 @@ export const UserController = {
     request: FastifyRequest<{ Body: userZodSchemaType }>,
     reply: FastifyReply
   ) => {
-    console.log(request.body);
-    const createUserResult = await prisma.user.create({
-      data: {
-        username: request.body.username,
-        password: request.body.password,
-      },
-    });
-    console.log(createUserResult);
-
-    reply.setCookie("username", request.body.username, {
-      maxAge: 86400000,
-      path: "/",
-      httpOnly: true,
-    });
-    reply.status(200).send();
-  },
-  signIn: async (
-    request: FastifyRequest<{ Body: userZodSchemaType }>,
-    reply: FastifyReply
-  ) => {
-    const user = await prisma.user.findUnique({
-      where: {
-        username: request.body.username,
-        password: request.body.password,
-      },
-    });
-    if (user) {
-      console.log(user);
+    try {
+      const user = await prisma.user.create({
+        data: {
+          username: request.body.username,
+          password: request.body.password,
+        },
+      });
       reply.setCookie("username", request.body.username, {
         maxAge: 86400000,
         path: "/",
         httpOnly: true,
       });
-      reply.status(200).send();
-    } else {
-      console.log("user не авторизований");
-      reply.status(401).send();
+      reply.status(200).send({ username: user.username, message: 'Registration successful' });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Registration error:', error.message);
+        reply.status(500).send({ message: 'Error during registration', error: error.message });
+      } else {
+        reply.status(500).send({ message: 'Unknown error occurred during registration' });
+      }
+    }
+  },
+  signIn: async (
+    request: FastifyRequest<{ Body: userZodSchemaType }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          username: request.body.username,
+        },
+      });
+
+      if (user) {
+        reply.setCookie("username", request.body.username, {
+          maxAge: 86400000,
+          path: "/",
+          httpOnly: true,
+        });
+        reply.status(200).send({ username: user.username, message: 'Login successful!' });
+      } else {
+        reply.status(401).send({ message: 'User not authenticated' });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Login error:', error.message);
+        reply.status(500).send({ message: 'Error during login', error: error.message });
+      } else {
+        reply.status(500).send({ message: 'Unknown error occurred during login' });
+      }
     }
   },
   isAuth: async (request: FastifyRequest, reply: FastifyReply) => {
-    const username = request.cookies?.username;
-    if (username) {
-      console.log("username знайдено");
-      console.log(username);
-      reply.status(200).send();
-    } else {
-      console.log("username не знайдено");
-      reply.status(401).send();
+    try {
+      const usernameCookie = request.cookies?.username;
+      if (usernameCookie) {
+        reply.status(200).send({ username: usernameCookie, message: 'User authenticated' });
+      } else {
+        reply.status(401).send({ message: 'User not authenticated' });
+      }
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      reply.status(500).send({ message: 'Internal server error' });
     }
   },
-  // addProduct: async (
-  //   request: FastifyRequest<{ Body: { productId: number } }>,
-  //   reply: FastifyReply
-  // ) => {
-  //   const username = request.cookies?.username;
-
-  //   const user = await prisma.user.update({
-  //     where: { username },
-  //     data: {
-  //       products: {
-  //         connect: { id: request.body.productId }
-  //       }
-  //     }
-  //   })
-  //   if (user) {
-  //     console.log('Product added successfully');
-  //     reply.status(200).send();
-
-  //   } else {
-  //     console.log('Product not added');
-  //     reply.status(400).send();
-  //   }
-  // },
-  // getUserProducts: async (
-  //   request: FastifyRequest,
-  //   reply: FastifyReply
-  // ) => {
-  //   const username = request.cookies?.username;
-
-  //   const userWithProducts = await prisma.user.findUnique({
-  //     where: { username },
-  //     include: { products: true }
-  //   });
-
-  //   if (userWithProducts) {
-  //     const products = userWithProducts.products;
-  //     console.log(products);
-  //     reply.send(products);
-  //   } else {
-  //     console.log('Error when searching for products');
-  //     reply.status(400).send();
-  //   }
-  // }
+  logout: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      reply.clearCookie('username');
+      reply.status(200).send({ message: 'Logout successful' });
+    } catch (error) {
+      console.error('Logout error:', error);
+      reply.status(500).send({ message: 'Logout failed' });
+    }
+  }
 }
