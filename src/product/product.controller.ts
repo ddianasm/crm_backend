@@ -38,7 +38,7 @@ export const ProductController = {
         },
       });
 
-      return reply.status(201).send({ message: 'Product added', product: addProductResult });
+      return reply.status(200).send({ message: 'Product added', product: addProductResult });
     } catch (error) {
       console.error('Error adding product:', error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
