@@ -1,6 +1,7 @@
 import { FastifyPluginCallback } from "fastify";
-import { UserController } from "@/user/user.controller";
-import { userJsonSchema } from "@/user/user.zod.schema";
+import { UserController } from "@/auth/auth.controller";
+import { userJsonSchema } from "@/auth/auth.zod.schema";
+import { AuthMiddleware } from "@/auth/auth.middleware";
 
 export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
   server.route({
@@ -9,6 +10,7 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
     schema: {
       body: userJsonSchema.$ref,
     },
+    preHandler: [],
     handler: UserController.signUp,
   });
 
@@ -18,18 +20,21 @@ export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
     schema: {
       body: userJsonSchema.$ref,
     },
+    preHandler: [],
     handler: UserController.signIn,
   });
 
   server.route({
     url: "/auth",
     method: "GET",
+    // preHandler: [AuthMiddleware],
     handler: UserController.isAuth,
   });
 
   server.route({
     url: "/logout",
     method: "GET",
+    preHandler: [],
     handler: UserController.logout,
   });
 

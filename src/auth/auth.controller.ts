@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { userZodSchemaType } from "@/user/user.zod.schema";
+import { userZodSchemaType } from "@/auth/auth.zod.schema";
 
 const prisma = new PrismaClient();
 
@@ -62,17 +62,14 @@ export const UserController = {
     }
   },
   isAuth: async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const usernameCookie = request.cookies?.username;
-      if (usernameCookie) {
-        reply.status(200).send({ username: usernameCookie, message: 'User authenticated' });
-      } else {
-        reply.status(401).send({ message: 'User not authenticated' });
-      }
-    } catch (error) {
-      console.error('Error during authentication:', error);
-      reply.status(500).send({ message: 'Internal server error' });
-    }
+    const usernameCookie = request.cookies?.username;
+
+    (request.cookies.fajdjs as any).dsad
+
+    if (!usernameCookie)
+      return reply.status(401).send({ message: 'User not authenticated' });
+
+    reply.status(200).send({ username: usernameCookie, message: 'User authenticated' });
   },
   logout: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
