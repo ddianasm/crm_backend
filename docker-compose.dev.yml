@@ -1,6 +1,7 @@
 version: "3"
 
 volumes:
+  node_modules: 
   db:
 
 services:
@@ -17,6 +18,7 @@ services:
     env_file: ".env"
     volumes:
       - ./:/app
+      - node_modules:/app/node_modules
     depends_on:
       - database_crm
 

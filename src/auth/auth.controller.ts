@@ -1,83 +1,55 @@
-import { PrismaClient } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { userZodSchemaType } from "@/auth/auth.zod.schema";
+import { AuthError } from "@/utils/errors";
+import bcrypt from "bcrypt"
+import { createSession } from "@/auth/auth.service";
+import { prisma } from "@/utils/prisma";
+import { z } from "zod";
+import userSchema from "@/auth/auth.zod.schema"
 
-const prisma = new PrismaClient();
 
 export const UserController = {
-  signUp: async (
-    request: FastifyRequest<{ Body: userZodSchemaType }>,
-    reply: FastifyReply
-  ) => {
-    try {
-      const user = await prisma.user.create({
-        data: {
-          username: request.body.username,
-          password: request.body.password,
-        },
-      });
-      reply.setCookie("username", request.body.username, {
-        maxAge: 86400000,
-        path: "/",
-        httpOnly: true,
-      });
-      reply.status(200).send({ username: user.username, message: 'Registration successful' });
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Registration error:', error.message);
-        reply.status(500).send({ message: 'Error during registration', error: error.message });
-      } else {
-        reply.status(500).send({ message: 'Unknown error occurred during registration' });
-      }
-    }
-  },
-  signIn: async (
-    request: FastifyRequest<{ Body: userZodSchemaType }>,
-    reply: FastifyReply
-  ) => {
-    try {
-      const user = await prisma.user.findUnique({
-        where: {
-          username: request.body.username,
-        },
+
+  signUp: async (request: FastifyRequest<{ Body: z.infer<typeof userSchema.zod> }>, reply: FastifyReply) => {
+    let { username, password } = request.body
+    password = await bcrypt.hash(password, 10)
+
+    const user = await prisma.user
+      .create({
+        data: { username, password }
+      })
+      .catch(e => {
+        if (e.code === "P2002") throw new AuthError("Username must be unique")
       });
 
-      if (user) {
-        reply.setCookie("username", request.body.username, {
-          maxAge: 86400000,
-          path: "/",
-          httpOnly: true,
-        });
-        reply.status(200).send({ username: user.username, message: 'Login successful!' });
-      } else {
-        reply.status(401).send({ message: 'User not authenticated' });
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Login error:', error.message);
-        reply.status(500).send({ message: 'Error during login', error: error.message });
-      } else {
-        reply.status(500).send({ message: 'Unknown error occurred during login' });
-      }
-    }
+    if (!user) throw new AuthError("User not created")
+
+    // Користувача успішно створено, відправляється відповідь
+    createSession(request, reply)
+    reply.send({ username: user.username, message: 'Registration successful' });
   },
+
+
+  signIn: async (request: FastifyRequest<{ Body: z.infer<typeof userSchema.zod> }>, reply: FastifyReply) => {
+    const { username, password } = request.body
+    const user = await prisma.user.findFirst({
+      where: { username }
+    });
+    if (!user) throw new AuthError("User not found")
+    if (!bcrypt.compare(password, user.password)) throw new AuthError("The username or password is incorrect.")
+
+    // Користувач авторизований, відправляється відповідь
+    createSession(request, reply)
+    reply.send({ username: user.username, message: 'Login successful!' });
+  },
+
+
   isAuth: async (request: FastifyRequest, reply: FastifyReply) => {
-    const usernameCookie = request.cookies?.username;
-
-    (request.cookies.fajdjs as any).dsad
-
-    if (!usernameCookie)
-      return reply.status(401).send({ message: 'User not authenticated' });
-
-    reply.status(200).send({ username: usernameCookie, message: 'User authenticated' });
+    reply.send({ username: request.user?.username, message: 'User authenticated' });
   },
+
+
   logout: async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      reply.clearCookie('username');
-      reply.status(200).send({ message: 'Logout successful' });
-    } catch (error) {
-      console.error('Logout error:', error);
-      reply.status(500).send({ message: 'Logout failed' });
-    }
+    reply.clearCookie('username');
+    reply.send({ message: 'Logout successful' });
   }
 }

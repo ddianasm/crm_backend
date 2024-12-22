@@ -1,40 +1,40 @@
 import { FastifyPluginCallback } from "fastify";
 import { UserController } from "@/auth/auth.controller";
-import { userJsonSchema } from "@/auth/auth.zod.schema";
 import { AuthMiddleware } from "@/auth/auth.middleware";
+import userSchema from "@/auth/auth.zod.schema"
 
 export const UserRoutes: FastifyPluginCallback = async (server, opts, done) => {
   server.route({
-    url: "/sign-up",
+    url: "/auth",
+    method: "GET",
+    preHandler: [AuthMiddleware],
+    handler: UserController.isAuth,
+  });
+
+  server.route({
+    url: "/auth/signup",
     method: "POST",
     schema: {
-      body: userJsonSchema.$ref,
+      body: userSchema.json.$ref,
     },
     preHandler: [],
     handler: UserController.signUp,
   });
 
   server.route({
-    url: "/sign-in",
+    url: "/auth/signin",
     method: "POST",
     schema: {
-      body: userJsonSchema.$ref,
+      body: userSchema.json.$ref,
     },
     preHandler: [],
     handler: UserController.signIn,
   });
 
   server.route({
-    url: "/auth",
+    url: "/auth/logout",
     method: "GET",
-    // preHandler: [AuthMiddleware],
-    handler: UserController.isAuth,
-  });
-
-  server.route({
-    url: "/logout",
-    method: "GET",
-    preHandler: [],
+    preHandler: [AuthMiddleware],
     handler: UserController.logout,
   });
 

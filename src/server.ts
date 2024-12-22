@@ -3,9 +3,10 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import { UserRoutes } from "@/auth/auth.routes";
 import config from "@/config";
-import { userJsonSchema } from "@/auth/auth.zod.schema";
 import { productJsonSchema } from "@/product/product.zod.schema";
 import { ProductRoutes } from "@/product/product.routes";
+import { ExeptionError } from "@/utils/errors";
+import userSchema from "@/auth/auth.zod.schema"
 
 export const BuildServer = async () => {
   const server = fastify({});
@@ -14,7 +15,7 @@ export const BuildServer = async () => {
     secret: "my-secret",
   });
 
-  server.addSchema(userJsonSchema.schema);
+  server.addSchema(userSchema.json.schema);
   server.addSchema(productJsonSchema.schema);
   server.register(fastifyCors, {
     origin: "http://localhost:3005",
@@ -22,8 +23,12 @@ export const BuildServer = async () => {
   });
   server.register(UserRoutes);
   server.register(ProductRoutes)
+
   server.setErrorHandler((error, req, reply) => {
-    reply.status(500).send({ message: (error as any).message });
+    const { code, message } = error as unknown as ExeptionError
+    reply
+      .status(code)
+      .send({ message });
   })
 
   await server.listen({

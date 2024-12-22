@@ -1,51 +1,16 @@
+import { AuthError } from "@/utils/errors";
+import { prisma } from "@/utils/prisma";
 import { FastifyReply, FastifyRequest } from "fastify";
 
-export const AuthMiddleware = (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-        reply.clearCookie('username');
+export const AuthMiddleware = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { username } = request.cookies;
 
-        const usernameCookie = request.cookies?.username;
-        if (!usernameCookie)
-            throw new AuthError("User not authenticated")
+    if (!username) throw new AuthError("Session not found")
 
-        reply.send("Auth")
-        // request.auth = {}
-    } catch (error) {
-        const e = error as unknown as any
-        if (e.name === "Error")
-            reply.status(401).send({ message: e.message });
+    const user = await prisma.user.findFirst({
+        where: { username }
+    });
+    if (!user) throw new AuthError("User not found")
 
-        if (e instanceof AuthError)
-            reply.status(401).send({ message: "AuthError: " + e.message });
-
-        // console.log(e.name)
-        // console.log(e.message)
-        // console.log(e.stack)
-        // reply.status(401).send({ message: 'User not authenticated' });
-    }
-
-}
-
-class SystemError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = "SystemError"
-        this.message = message
-    }
-}
-
-class PrismaError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = "PrismaError"
-        this.message = message
-    }
-}
-
-class AuthError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = "AuthError"
-        this.message = message
-    }
+    request.user = user
 }
