@@ -11,6 +11,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  new
+  in_process
+  completed
+}
+
 model User {
   id       Int       @id @default(autoincrement())
   username String    @unique
@@ -19,15 +25,16 @@ model User {
 }
 
 model Product {
-  id     Int    @id @default(autoincrement())
-  name   String 
-  amount Int
-  price Int
+  id       Int           @id @default(autoincrement())
+  name     String
+  amount   Int
+  price    Int
   customer String
-  email String
-  phone String
-  date DateTime   @default(now())
-  status String
-  user  User @relation(fields: [userId], references: [id])
-  userId Int
+  email    String
+  phone    String
+  date     DateTime      @default(now())
+  status   Status
+  user     User          @relation(fields: [userId], references: [id])
+  userId   Int
 }
+

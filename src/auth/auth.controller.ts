@@ -18,7 +18,7 @@ export const UserController = {
         data: { username, password }
       })
       .catch(e => {
-        if (e.code === "P2002") throw new AuthError("Username must be unique")
+        if (e.code === "P2002") throw new AuthError("Username unavailable. Try another.")
       });
 
     if (!user) throw new AuthError("User not created")
@@ -31,11 +31,15 @@ export const UserController = {
 
   signIn: async (request: FastifyRequest<{ Body: z.infer<typeof userSchema.zod> }>, reply: FastifyReply) => {
     const { username, password } = request.body
+
     const user = await prisma.user.findFirst({
       where: { username }
     });
-    if (!user) throw new AuthError("User not found")
-    if (!bcrypt.compare(password, user.password)) throw new AuthError("The username or password is incorrect.")
+
+    if (!user) throw new AuthError("The username or password is incorrect.")
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) throw new AuthError("The username or password is incorrect.");
 
     // Користувач авторизований, відправляється відповідь
     createSession(request, reply)

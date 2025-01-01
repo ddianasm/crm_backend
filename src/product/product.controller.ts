@@ -2,10 +2,10 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { productZodSchemaType } from "@/product/product.zod.schema";
 import { prisma } from "@/utils/prisma";
 import { NotFoundError } from "@/utils/errors";
+import { formatDate } from "@/utils/dateUtils";
 
 export const ProductController = {
   add: async (request: FastifyRequest<{ Body: productZodSchemaType }>, reply: FastifyReply) => {
-    console.log(request.body);
     const {
       name, amount, price, customer, email, phone, status
     } = request.body
@@ -20,11 +20,9 @@ export const ProductController = {
         phone,
         date: new Date(),
         status,
-        userId: request.user?.id!
+        userId: request.user?.id!,
       },
     });
-
-    console.log(addProductResult);
 
     return reply.send({ message: 'Product added', product: addProductResult });
   },
@@ -60,7 +58,11 @@ export const ProductController = {
     });
 
     // if (products.length === 0) throw new NotFoundError('No products found');
+    const formattedProducts = products.map(product => ({
+      ...product,
+      date: formatDate(new Date(product.date)), // Перетворення дати
+    }));
 
-    return reply.send(products);
+    return reply.send(formattedProducts);
   },
 };
