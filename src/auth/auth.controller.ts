@@ -23,9 +23,11 @@ export const UserController = {
 
     if (!user) throw new AuthError("User not created")
 
+    const userId = String(user.id);
+
     // Користувача успішно створено, відправляється відповідь
-    createSession(request, reply)
-    reply.send({ username: user.username, message: 'Registration successful' });
+    createSession(request, reply, userId)
+    reply.send({ userId: user.id, message: 'Registration successful' });
   },
 
 
@@ -38,17 +40,19 @@ export const UserController = {
 
     if (!user) throw new AuthError("The username or password is incorrect.")
 
+    const userId = String(user.id);
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) throw new AuthError("The username or password is incorrect.");
 
     // Користувач авторизований, відправляється відповідь
-    createSession(request, reply)
-    reply.send({ username: user.username, message: 'Login successful!' });
+    createSession(request, reply, userId)
+    reply.send({ userId: user.id, message: 'Login successful!' });
   },
 
 
   isAuth: async (request: FastifyRequest, reply: FastifyReply) => {
-    reply.send({ username: request.user?.username, message: 'User authenticated' });
+    reply.send({ userId: request.user?.id, message: 'User authenticated' });
   },
 
 

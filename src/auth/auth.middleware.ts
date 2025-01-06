@@ -3,12 +3,14 @@ import { prisma } from "@/utils/prisma";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 export const AuthMiddleware = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { username } = request.cookies;
+    const { userId } = request.cookies;
 
-    if (!username) throw new AuthError("Session not found")
+    if (!userId) throw new AuthError("Session not found")
+
+    const id: number = Number(userId);
 
     const user = await prisma.user.findFirst({
-        where: { username }
+        where: { id }
     });
     if (!user) throw new AuthError("User not found")
 
