@@ -4,6 +4,7 @@ import { prisma } from "@/utils/prisma";
 import { NotFoundError } from "@/utils/errors";
 import { formatDate } from "@/utils/dateUtils";
 
+
 export const ProductController = {
   add: async (request: FastifyRequest<{ Body: productZodSchemaType }>, reply: FastifyReply) => {
     const {
@@ -53,9 +54,13 @@ export const ProductController = {
         email: true,
         phone: true,
         date: true,
-        status: true
-      }
+        status: true,
+      },
+      orderBy: {
+        date: 'desc',
+      },
     });
+
 
     // if (products.length === 0) throw new NotFoundError('No products found');
     const formattedProducts = products.map(product => ({
@@ -65,4 +70,10 @@ export const ProductController = {
 
     return reply.send(formattedProducts);
   },
+
+  getColumns: async (request: FastifyRequest, reply: FastifyReply) => {
+    const columns = ['name', 'amount', 'price', 'customer', 'email', 'phone', 'date', 'status']
+
+    return reply.send(columns);
+  }
 };

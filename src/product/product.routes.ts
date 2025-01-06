@@ -35,5 +35,12 @@ export const ProductRoutes: FastifyPluginCallback = async (server, opts, done) =
         handler: ProductController.delete
     })
 
+    server.route({
+        url: '/products/columns',
+        method: 'GET',
+        preHandler: [AuthMiddleware],
+        handler: ProductController.getColumns
+    })
+
     done();
 };
