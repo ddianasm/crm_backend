@@ -25,7 +25,6 @@ export const UserController = {
 
     const userId = String(user.id);
 
-    // Користувача успішно створено, відправляється відповідь
     createSession(request, reply, userId)
     reply.send({ userId: user.id, message: 'Registration successful' });
   },
@@ -45,7 +44,6 @@ export const UserController = {
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) throw new AuthError("The username or password is incorrect.");
 
-    // Користувач авторизований, відправляється відповідь
     createSession(request, reply, userId)
     reply.send({ userId: user.id, message: 'Login successful!' });
   },

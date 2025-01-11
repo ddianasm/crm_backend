@@ -65,7 +65,7 @@ export const ProductController = {
     // if (products.length === 0) throw new NotFoundError('No products found');
     const formattedProducts = products.map(product => ({
       ...product,
-      date: formatDate(new Date(product.date)), // Перетворення дати
+      date: formatDate(new Date(product.date)),
     }));
 
     return reply.send(formattedProducts);
