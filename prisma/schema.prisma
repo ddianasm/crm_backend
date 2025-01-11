@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  new
+  in_process
+  completed
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  password String
+  products Product[]
+}
+
+model Product {
+  id       Int           @id @default(autoincrement())
+  name     String
+  amount   Int
+  price    Int
+  customer String
+  email    String
+  phone    String
+  date     DateTime      @default(now())
+  status   Status
+  user     User          @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
